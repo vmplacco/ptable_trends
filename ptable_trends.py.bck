@@ -7,7 +7,6 @@ from bokeh.sampledata.periodic_table import elements
 from bokeh.transform import dodge
 from csv import reader
 from matplotlib.colors import Normalize, LogNorm, to_hex
-from matplotlib.colors import ListedColormap
 from matplotlib.cm import plasma, inferno, magma, viridis, ScalarMappable
 from pandas import options
 import argparse
@@ -141,13 +140,6 @@ elif log_scale == 1:
 	norm = LogNorm(vmin = min(data), vmax = max(data))
 color_scale = ScalarMappable(norm=norm, cmap=cmap).to_rgba(data,alpha=None)
 
-
-col_dict={0:"#C4C4C4",
-          1:"#0076B6",
-          2:"#F15D5D"}
-
-color_mapper = LinearColorMapper([col_dict[x] for x in col_dict.keys()])
-
 #Define color for blank entries
 blank_color = '#c4c4c4'
 color_list = []
@@ -171,7 +163,6 @@ source = ColumnDataSource(
         group=[str(x) for x in elements['group']],
         period=[str(y) for y in elements['period']],
         sym=elements['symbol'],
-        nam=elements['name'],
         atomic_number=elements['atomic number'],
         type_color=color_list
     )
@@ -193,15 +184,12 @@ text_props = {
     'text_align': 'left',
     'text_baseline': 'middle'
 }
-
 x = dodge("group", -0.4, range=p.x_range)
 y = dodge("period", 0.3, range=p.y_range)
 p.text(x=x, y='period', text='sym',
        text_font_style='bold', text_font_size='16pt', **text_props)
 p.text(x=x, y=y, text='atomic_number',
        text_font_size='11pt', **text_props)
-p.text(x=x, y=dodge("period",-0.3,range=p.y_range), text='nam',
-       text_font_size='5pt', **text_props)
 
 color_bar = ColorBar(color_mapper=color_mapper,
 	ticker=BasicTicker(desired_num_ticks=10),border_line_color=None,
